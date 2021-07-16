@@ -1,0 +1,80 @@
+package main
+
+import (
+	"fmt"
+	"os"
+	"time"
+)
+
+type ErrorWithTime struct {
+	text string
+	time time.Time
+}
+
+func NewError(text string) error {
+	return &ErrorWithTime{
+		text: text,
+		time: time.Now(),
+	}
+}
+func (e *ErrorWithTime) Error() string {
+	return fmt.Sprintf("error: %s, time: %s\n", e.text, e.time)
+}
+func main() {
+	f, err := os.Create("new_file")
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+	_, _ = fmt.Fprintln(f, "data")
+	input()
+}
+func input() {
+	defer func() {
+		if t := recover(); t != nil {
+			fmt.Println(NewError("Recovered"), t)
+			input()
+		}
+	}()
+
+	var a, b, r int
+	var op string
+
+	fmt.Print("Input a: ")
+	if _, err := fmt.Scanln(&a); err != nil {
+		fmt.Println(NewError("a must be numeric"))
+		return
+	}
+
+	fmt.Print("Input b: ")
+	if _, err := fmt.Scanln(&b); err != nil {
+		fmt.Println(NewError("b must be numeric"))
+		return
+	}
+
+	fmt.Print("Input op: ")
+	if _, err := fmt.Scanln(&op); err != nil {
+
+		return
+	}
+	r = calc(a, b, op)
+	fmt.Println(a, op, b, "=", r)
+}
+
+func calc(a int, b int, op string) (r int) {
+	switch op {
+	case "+":
+		r = a + b
+	case "-":
+		r = a - b
+	case "*":
+		r = a * b
+	case "/":
+		r = a / b
+
+	default:
+		fmt.Println(NewError("Operation must be +, -, /, *, ^"))
+		return
+	}
+	return r
+}
