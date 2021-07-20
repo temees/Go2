@@ -1,4 +1,5 @@
-package main
+// Package les2 Это главный пакет
+package les2
 
 import (
 	"fmt"
@@ -6,20 +7,26 @@ import (
 	"time"
 )
 
+//ErrorWithTime Это обявленная структура
 type ErrorWithTime struct {
 	text string
 	time time.Time
 }
 
+//NewError Это создание ошибки
 func NewError(text string) error {
 	return &ErrorWithTime{
 		text: text,
 		time: time.Now(),
 	}
 }
+
+//Это функция вывода ошибки
 func (e *ErrorWithTime) Error() string {
 	return fmt.Sprintf("error: %s, time: %s\n", e.text, e.time)
 }
+
+//Главная функция
 func main() {
 	f, err := os.Create("new_file")
 	if err != nil {
@@ -29,6 +36,8 @@ func main() {
 	_, _ = fmt.Fprintln(f, "data")
 	input()
 }
+
+//Функция ввода данных
 func input() {
 	defer func() {
 		if t := recover(); t != nil {
@@ -61,6 +70,7 @@ func input() {
 	fmt.Println(a, op, b, "=", r)
 }
 
+//Функция выполнения операций
 func calc(a int, b int, op string) (r int) {
 	switch op {
 	case "+":
